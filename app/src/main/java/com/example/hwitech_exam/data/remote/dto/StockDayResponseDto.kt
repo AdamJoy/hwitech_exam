@@ -12,72 +12,50 @@ import com.google.gson.annotations.SerializedName
  *
  * 所有欄位皆維持 String 型別，
  * 後續由 Repository 或 Mapper 轉換為 Domain Model。
+ *
+ * @property date 資料日期
+ * @property code 股票代碼，例如：2330
+ * @property name 股票名稱，例如：台積電
+ * @property tradeVolume 成交股數
+ * @property tradeValue 成交金額
+ * @property openingPrice 開盤價
+ * @property highestPrice 最高價
+ * @property lowestPrice 最低價
+ * @property closingPrice 收盤價
+ * @property change 漲跌價差
+ * @property transaction 成交筆數
  */
 data class StockDayResponseDto(
-
-    /**
-     * 資料日期
-     */
     @SerializedName("Date")
     val date: String,
 
-    /**
-     * 股票代碼，例如：2330
-     */
     @SerializedName("Code")
     val code: String,
 
-    /**
-     * 股票名稱，例如：台積電
-     */
     @SerializedName("Name")
     val name: String,
 
-    /**
-     * 成交股數
-     */
     @SerializedName("TradeVolume")
     val tradeVolume: String,
 
-    /**
-     * 成交金額
-     */
     @SerializedName("TradeValue")
     val tradeValue: String,
 
-    /**
-     * 開盤價
-     */
     @SerializedName("OpeningPrice")
     val openingPrice: String,
 
-    /**
-     * 最高價
-     */
     @SerializedName("HighestPrice")
     val highestPrice: String,
 
-    /**
-     * 最低價
-     */
     @SerializedName("LowestPrice")
     val lowestPrice: String,
 
-    /**
-     * 收盤價
-     */
     @SerializedName("ClosingPrice")
     val closingPrice: String,
 
-    /**
-     * 漲跌價差
-     */
     @SerializedName("Change")
     val change: String,
 
-    /**
-     * 成交筆數
-     */
     @SerializedName("Transaction")
     val transaction: String,
 )
