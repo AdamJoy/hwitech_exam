@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="股票排序"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginBottom="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroupSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 降序 -->
+        <RadioButton
+            android:id="@+id/radioDescending"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="股票代號：降序"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:buttonTint="?android:attr/colorAccent"/>
+
+        <!-- 升序 -->
+        <RadioButton
+            android:id="@+id/radioAscending"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="股票代號：升序"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:buttonTint="?android:attr/colorAccent"/>
+
+    </RadioGroup>
+
+</LinearLayout>
