@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import android.app.AlertDialog
+import android.content.res.Configuration
+import android.widget.FrameLayout
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hwitech_exam.data.remote.api.RetrofitClient
 import com.example.hwitech_exam.data.repository.StockRepositoryImpl
@@ -27,6 +30,7 @@ import com.example.hwitech_exam.view.stock.StockSortOrder
 import com.example.hwitech_exam.view.stock.StockUiState
 import com.example.hwitech_exam.view.stock.StockViewModel
 import com.example.hwitech_exam.view.stock.StockViewModelFactory
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
@@ -110,14 +114,26 @@ class MainActivity : ComponentActivity() {
      * 初始化股票 RecyclerView。
      */
     private fun setupRecyclerView() {
+
+        val spanCount = when (
+            resources.configuration.orientation
+        ) {
+            Configuration.ORIENTATION_LANDSCAPE -> 2
+            else -> 1
+        }
+
         binding.recyclerViewStocks.apply {
-            layoutManager = LinearLayoutManager(
-                this@MainActivity
+            layoutManager = GridLayoutManager(
+                this@MainActivity,
+                spanCount
             )
             adapter = stockAdapter
+            // 避免排序時出現大量 Item 移動動畫
+            itemAnimator = null
             setHasFixedSize(false)
         }
     }
+
 
     /**
      * 設定下拉刷新事件。
@@ -147,50 +163,49 @@ class MainActivity : ComponentActivity() {
      * 自動勾選對應排序選項。
      */
     private fun showSortBottomSheet() {
-
-        // 建立 BottomSheet ViewBinding
         val sheetBinding = BottomSheetStockSortBinding.inflate(
             layoutInflater
         )
-
-        // 建立 BottomSheetDialog
         val dialog = BottomSheetDialog(this)
-
         dialog.setContentView(sheetBinding.root)
-
         // 取得目前排序方向
         val currentOrder = viewModel.uiState.value.sortOrder
 
-        // 根據目前排序方式設定選取狀態
         when (currentOrder) {
-            StockSortOrder.ASC -> {
+            StockSortOrder.ASC ->
                 sheetBinding.radioAscending.isChecked = true
-            }
-            StockSortOrder.DESC -> {
+            StockSortOrder.DESC ->
                 sheetBinding.radioDescending.isChecked = true
-            }
         }
 
-        // 監聽排序選項
         sheetBinding.radioGroupSort
             .setOnCheckedChangeListener { _, checkedId ->
-
                 val selectedOrder = when (checkedId) {
-                    R.id.radioAscending ->
-                        StockSortOrder.ASC
-                    R.id.radioDescending ->
-                        StockSortOrder.DESC
+                    R.id.radioAscending -> StockSortOrder.ASC
+                    R.id.radioDescending -> StockSortOrder.DESC
                     else -> return@setOnCheckedChangeListener
                 }
-                Log.d(TAG, "使用者選擇排序：$selectedOrder")
-
-                // 通知 ViewModel 更新排序後 呼叫submitList
                 viewModel.setSortOrder(selectedOrder)
-                // 關閉 BottomSheet
                 dialog.dismiss()
             }
+
         // 顯示 BottomSheet
         dialog.show()
+
+        // 橫向時展開 BottomSheet
+        if (resources.configuration.orientation ==
+            Configuration.ORIENTATION_LANDSCAPE
+        ) {
+            val bottomSheet = dialog.findViewById<FrameLayout>(
+                com.google.android.material.R.id.design_bottom_sheet
+            )
+
+            bottomSheet?.let { sheet ->
+                val behavior = BottomSheetBehavior.from(sheet)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed = true
+            }
+        }
     }
 
     /**
